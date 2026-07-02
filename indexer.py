@@ -2,7 +2,7 @@ from sentence_transformers import SentenceTransformer
 import chromadb
 import os
 
-from .ast_extractor import make_python_parser, parse_source, extract_all_function_info
+from ast_extractor import make_python_parser, parse_source, extract_all_function_info
 
 MODEL_NAME = "all-MiniLM-L6-v2"
 _current_dir = os.path.dirname(os.path.abspath(__file__))

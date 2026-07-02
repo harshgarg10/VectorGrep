@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import uvicorn
 
-from .indexer import index_source_code, search_codebase
+from indexer import index_source_code, search_codebase
 
 
 app = FastAPI(
