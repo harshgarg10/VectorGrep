@@ -1,7 +1,7 @@
 from sentence_transformers import SentenceTransformer
 import chromadb
 
-from ast_extractor import make_python_parser, parse_source, extract_all_function_info
+from .ast_extractor import make_python_parser, parse_source, extract_all_function_info
 
 MODEL_NAME = "all-MiniLM-L6-v2"
 CHROMA_PATH = "./chroma_db"
@@ -79,16 +79,21 @@ def index_source_code(source: str, file_path: str):
     function_records = extract_all_function_info(tree.root_node)
     index_function_records(function_records, file_path)
 
-def search_codebase(query: str, n_results: int = 5) -> list[dict]:
+def search_codebase(query: str, n_results: int = 5, file_path: str | None = None) -> list[dict]:
     model = get_model()
     collection = get_chroma_collection()
     query_vector = model.encode(query).tolist()
 
-    results = collection.query(
-        query_embeddings=[query_vector],
-        n_results=n_results,
-        include=["metadatas", "documents", "distances"]
-    )
+    query_kwargs = {
+        "query_embeddings": [query_vector],
+        "n_results": n_results,
+        "include": ["metadatas", "documents", "distances"],
+    }
+
+    if file_path:
+        query_kwargs["where"] = {"file_path": file_path}
+
+    results = collection.query(**query_kwargs)
 
     formatted_results = []
     

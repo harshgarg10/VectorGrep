@@ -2,17 +2,22 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import uvicorn
 
-from indexer import index_source_code, search_codebase
+from .indexer import index_source_code, search_codebase
 
 
 app = FastAPI(
     title="Semantic Code Search API",
     description="Microservice for embedding and searching code using AST and Vector DB."
 )
-
 class IndexRequest(BaseModel):
     file_path: str
     source_code: str
+
+
+class SearchRequest(BaseModel):
+    q: str
+    limit: int = 5
+    file_path: str | None = None
 
 @app.post("/index_file")
 async def index_file_endpoint(request: IndexRequest):
@@ -31,11 +36,11 @@ async def index_file_endpoint(request: IndexRequest):
         raise HTTPException(status_code=500, detail=str(e))
     
 @app.get("/search")
-async def search_endpoint(q: str, limit: int = 5):
+async def search_endpoint(q: str, limit: int = 5, file_path: str | None = None):
     try:
         print(f"Semantic Search triggered for: '{q}'")
         
-        results = search_codebase(query=q, n_results=limit)
+        results = search_codebase(query=q, n_results=limit, file_path=file_path)
         
         return {
             "status": "success",
@@ -49,4 +54,4 @@ async def search_endpoint(q: str, limit: int = 5):
 
 if __name__ == "__main__":
     print("Starting Semantic Search API on port 8000...")
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("VectorGrep.main:app", host="0.0.0.0", port=8000, reload=True)
