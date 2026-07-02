@@ -79,6 +79,31 @@ def index_source_code(source: str, file_path: str):
     function_records = extract_all_function_info(tree.root_node)
     index_function_records(function_records, file_path)
 
+def search_codebase(query: str, n_results: int = 5) -> list[dict]:
+    model = get_model()
+    collection = get_chroma_collection()
+    query_vector = model.encode(query).tolist()
+
+    results = collection.query(
+        query_embeddings=[query_vector],
+        n_results=n_results,
+        include=["metadatas", "documents", "distances"]
+    )
+
+    formatted_results = []
+    
+    if not results["ids"] or not results["ids"][0]:
+        return formatted_results
+
+    for i in range(len(results["ids"][0])):
+        formatted_results.append({
+            "id": results["ids"][0][i],
+            "text": results["documents"][0][i],
+            "metadata": results["metadatas"][0][i],
+            "distance": results["distances"][0][i]  
+        })
+
+    return formatted_results
 
 if __name__ == "__main__":
     sample_source = """
