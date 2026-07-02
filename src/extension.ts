@@ -21,7 +21,7 @@ export function activate(context: vscode.ExtensionContext) {
     }
 
     try {
-      const response = await axios.post('http://127.0.0.1:8000/index_file', {
+      const response = await axios.post('https://harshgarg10-vectorgrep-backend.hf.space/index_file', {
         file_path: filePath,
         source_code: document.getText(),
       });
@@ -105,7 +105,7 @@ class VectorGrepSidebarProvider implements vscode.WebviewViewProvider {
 
         if (activeEditor) {
           try {
-            await axios.post('http://127.0.0.1:8000/index_file', {
+            await axios.post('https://harshgarg10-vectorgrep-backend.hf.space/index_file', {
               file_path: activeEditor.document.uri.fsPath,
               source_code: activeEditor.document.getText(),
             });
@@ -115,7 +115,7 @@ class VectorGrepSidebarProvider implements vscode.WebviewViewProvider {
         }
 
         try {
-          const response = await axios.get('http://127.0.0.1:8000/search', {
+          const response = await axios.get('https://harshgarg10-vectorgrep-backend.hf.space/search', {
             params: {
               q: message.query,
               limit: 5,

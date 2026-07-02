@@ -3,6 +3,11 @@
   "displayName": "VectorGrep",
   "description": "VS Code client for semantic code search",
   "version": "0.0.1",
+  "publisher": "harshgarg10",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/harshgarg10/vectorgrep"
+  },
   "engines": {
     "vscode": "^1.125.0"
   },
@@ -46,6 +51,9 @@
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src",
     "test": "vscode-test"
+  },
+  "dependencies": {
+    "axios": "^1.6.0"
   },
   "devDependencies": {
     "@types/vscode": "^1.125.0",
