@@ -1,10 +1,12 @@
 from sentence_transformers import SentenceTransformer
 import chromadb
+import os
 
 from .ast_extractor import make_python_parser, parse_source, extract_all_function_info
 
 MODEL_NAME = "all-MiniLM-L6-v2"
-CHROMA_PATH = "./chroma_db"
+_current_dir = os.path.dirname(os.path.abspath(__file__))
+CHROMA_PATH = os.path.join(_current_dir, "chroma_db")
 
 
 _model = None
@@ -68,8 +70,19 @@ def upsert_function_record(function_record: dict, file_path: str):
     )
 
 def index_function_records(function_records: list[dict], file_path: str):
+    valid_ids = []
     for function_record in function_records:
         upsert_function_record(function_record, file_path)
+        valid_ids.append(f"{file_path}:{function_record['hash']}")
+
+    collection = get_chroma_collection()
+    existing_docs = collection.get(where={"file_path": file_path})
+    
+    if existing_docs and existing_docs["ids"]:
+        stale_ids = list(set(existing_docs["ids"]) - set(valid_ids))
+        if stale_ids:
+            print(f"Removing {len(stale_ids)} stale/deleted function(s) from index.")
+            collection.delete(ids=stale_ids)
 
 def index_source_code(source: str, file_path: str):
     parser = make_python_parser()

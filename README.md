@@ -1,71 +1,69 @@
-# vectorgrep README
+# VectorGrep
 
-This is the README for your extension "vectorgrep". After writing up a brief description, we recommend including the following sections.
+VectorGrep is a VSCode extension that provides semantic code search. Instead of searching by exact text or regular expressions, VectorGrep understands the *meaning* of your code using machine learning embeddings and AST extraction.
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+- **Semantic Code Search**: Find functions and classes by describing what they do, rather than remembering the exact syntax.
+- **Auto-Indexing**: VectorGrep automatically tracks, embeds, and indexes your code into a local ChromaDB vector database as you write, save, or switch tabs.
+- **Instant Navigation**: Click on any search result to instantly navigate to that exact function in your editor.
 
-For example if there is an image subfolder under your extension project workspace:
+## Prerequisites
 
-\!\[feature X\]\(images/feature-x.png\)
+VectorGrep runs entirely locally to preserve your privacy! This means your code is never sent to the cloud. Because of this, you must run the local ML backend.
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+You will need:
+- **Python 3.10+** installed on your system.
 
-## Requirements
+## Setup & Installation
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+To use this extension, follow these steps to get the local ML backend running:
 
-## Extension Settings
+1. **Install the Extension**
+   - Install the provided `vectorgrep-x.x.x.vsix` file into your VSCode by going to the Extensions tab -> Click the `...` menu in the top right -> **Install from VSIX...**
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+2. **Clone the Backend Repository**
+   - Download or clone the VectorGrep source code folder to your local machine.
 
-For example:
+3. **Install Dependencies**
+   - Open a terminal inside the backend folder.
+   - It is highly recommended to use a virtual environment:
+     ```bash
+     python -m venv .venv
+     # Windows
+     .venv\Scripts\activate
+     # Mac/Linux
+     source .venv/bin/activate
+     ```
+   - Install the required ML packages:
+     ```bash
+     pip install -r requirements.txt
+     ```
+     *(Note: This includes heavy packages like PyTorch, SentenceTransformers, and ChromaDB).*
 
-This extension contributes the following settings:
+4. **Run the Backend Server**
+   - Start the FastAPI backend server:
+     ```bash
+     uvicorn VectorGrep.main:app
+     ```
+   - *Note: On the very first run, it will download the `all-MiniLM-L6-v2` AI model, which might take a few minutes depending on your internet connection.*
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+## Usage
 
-## Known Issues
+1. Open any Python file in VSCode. 
+2. Open the **VectorGrep Sidebar** (look for its icon in your Activity Bar on the left).
+3. Type a natural language query in the search box (e.g. "Calculate the average of the student marks").
+4. Press **Search**.
+5. Click on the most relevant result card, and VSCode will jump straight to the source code!
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+## Architecture
 
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
+- **Frontend:** VSCode Extension (TypeScript / Webview)
+- **Backend:** FastAPI (Python)
+- **AST Parsing:** Tree-sitter (Python)
+- **Embeddings:** SentenceTransformers (`all-MiniLM-L6-v2`)
+- **Vector Database:** ChromaDB
 
 ---
 
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+**Enjoy Semantic Code Searching!**
